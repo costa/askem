@@ -1,0 +1,3 @@
+merb-gen flat --testing-framework=rspec --orm=datamapper --template-engine=haml askem
+cd askem
+git init

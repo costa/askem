@@ -1,25 +1,41 @@
 # Go to http://wiki.merbivore.com/pages/init-rb
 
- use_orm :datamapper
+use_orm :datamapper
 use_test :rspec
 use_template_engine :haml
 
-# Specify a specific version of a dependency
-# dependency "RedCloth", "> 3.0"
+dependency "merb-helpers"
+dependency "do_sqlite3"
+# IMPORTANT
+# export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$DYLD_FALLBACK_LIBRARY_PATH
+# or an equivalent on your OS if you're not on OSX yet
+dependency "gd2"
 
 Merb::BootLoader.before_app_loads do
   # This will get executed after dependencies have been loaded but before your app's classes have loaded.
 end
- 
+
 Merb::BootLoader.after_app_loads do
-  # This will get executed after your app's classes have been loaded.
+  GD2::Font::TrueType.fontconfig = true # TODO use local fonts in future!
 end
 
-# Move this to application.rb if you want it to be reloadable in dev mode.
-Merb::Router.prepare do
-  match('/').to(:controller => "askem", :action =>'index')
+class Merb::Request  # to make routing possible
+  def ref; params[:ref]; end
+end
 
-  default_routes
+Merb::Router.prepare do
+  match('/:question', :method => :get, :ssim => true).
+    to(:controller => 'askem', :action => 'show_flash').
+    name('show_flash')
+  match('/:question', :method => :get, :ref => /./).
+    to(:controller => 'askem', :action => 'show_stats').
+    name('show_stats')
+  match('/:question', :method => :get).
+    to(:controller => 'askem', :action => 'show_image').
+    name('show_image')
+  match('/', :method => :get).
+    to(:controller => 'askem', :action => 'index').
+    name('index')
 end
 
 Merb::Config.use { |c|
@@ -38,3 +54,5 @@ Merb::Config.use { |c|
   c[:reload_templates]    = true,
   c[:reload_time]         = 0.5
 }
+
+Merb.add_mime_type(:png,  :to_png,  %w[image/png]) # TODO move it out?

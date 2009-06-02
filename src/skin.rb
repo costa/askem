@@ -1,0 +1,160 @@
+
+=begin
+
+                          size
++-----------------------+
+| Question?     |       |
+|       |       |       |
+|  Yes  |  No   | Maybe |
++-----------------------+
+
+=end
+
+class Skin
+  include GD2
+
+  class << self
+
+    # TODO move it elsewhere?
+    def question_max; 256;  end
+    def answer_max; 16;  end
+    def max_answers; 16;  end
+
+    def image(question, style_s)
+      skin = Skin.new question, style_s
+      skin.render
+    end
+
+    def answer(question, style_s, x, y)
+      skin = Skin.new question, style_s
+      x2 = -1
+      vis_ans = question.answers.first max_answers
+      vis_ans.each_with_index do |ans, i|
+        x1 = x2+1
+        x2 = skin.width * (i + 1) / vis_ans.size - 1
+        return ans if (x1..x2) === x and (0...skin.height) === y
+      end
+      nil  # TODO report that dashed each* bug?
+    end
+
+
+    def question_font
+      @qfont ||= GD2::Font::TrueType['Helvetica', 18]
+    end
+
+    def answer_font(ratio)
+      (@afonts ||= {})[ratio] ||= GD2::Font::TrueType['Helvetica', 8 + 28*ratio]
+    end
+
+  end
+
+
+  attr_reader :width
+  def height; @question_height + @answer_height; end
+
+
+  def initialize(q, s)
+    # TODO make 'style' a CSS-style-coded param
+    # NOTE historical dead code below
+
+    @question = q
+    @answers = q.answers[0...self.class.max_answers]
+
+    qbr = Rectangle.new question_font.bounding_rectangle(@question.statement)
+    abr = @answers.inject(Rectangle.new) do |br, ans|
+      br.expand! self.class.answer_font(1).
+        bounding_rectangle answer_format(ans.statement)
+      br
+    end
+#    qbr.e += 2*margin
+#    qbr.s = 0
+#    qbr.w = 0
+#    qbr.n -= 2*margin
+#    abr.e = @answers.size * (abr.e + 2*margin)
+#    abr.s = 0
+#    abr.w = 0
+#    abr.n -= 2*margin
+#    @width = max(qbr.e, abr.e)
+#    @height = -(qbr.n + abr.n)
+##    abr.tile! :e, @answers.size, 2*margin
+##    abr.dock! :s, qbr, :n, 2*margin
+##    qbr.expand! abr
+##    qbr.grow!(margin)
+##    @width = qbr.width
+##    @height = qbr.height
+
+    @width = max(qbr.e + 2*margin, @answers.size * (abr.e + 2*margin))
+    @question_height = -qbr.n + 2*margin
+    @answer_height = -abr.n + 2*margin
+  end
+
+  def render
+    image = Image.new self.width, self.height
+     # TODO preset and custom image loading
+    image.save_alpha = true
+
+    image.draw do |pen|
+#      pen.anti_aliasing = true
+      x2 = -1
+      @answers.each_with_index do |ans, i|
+        image.alpha_blending = false
+        pen.color = answer_background(i, ans)
+        x1 = x2+1
+        x2 = width * (i + 1) / @answers.size - 1
+        pen.rectangle x1, 0, x2, self.height-1, true
+        pen.color = answer_color i, ans
+        pen.font = answer_font i, ans
+        br = Rectangle.new self.class.answer_font(ans.ratio).
+          bounding_rectangle answer_format(ans.statement)
+        pen.move_to(x1 + (x2-x1-br.e)/2, self.height - (@answer_height+br.n)/2)
+        image.alpha_blending = true
+        pen.text answer_format(ans.statement)
+      end
+      image.alpha_blending = false
+      pen.color = question_color
+      pen.font = question_font
+      pen.move_to margin, @question_height - margin
+      image.alpha_blending = true
+      pen.text question_format
+    end
+  end
+
+protected
+
+  def margin; 11; end
+
+  def question_color
+    Color::BLACK
+  end
+
+  def question_font
+    self.class.question_font
+  end
+
+  def question_format
+    @question.statement.truncate self.class.question_max
+  end
+
+  def answer_color(i, answer)
+    Color::BLACK
+  end
+
+  def answer_background(i, answer)
+    h = answer.statement.hash.abs
+    Color[RGB_MAX/2 + h * 389 % RGB_MAX/2,
+          RGB_MAX/2 + h * 631 % RGB_MAX/2,
+          RGB_MAX/2 + h * 883 % RGB_MAX/2, 0.25]
+  end
+
+  def answer_font(i, answer)
+    self.class.answer_font answer.ratio
+  end
+
+  def answer_format(statement)
+    statement.truncate self.class.answer_max
+  end
+
+  def answer_position(i, answer)
+  end
+
+end

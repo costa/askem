@@ -1,3 +1,12 @@
-merb-gen flat --testing-framework=rspec --orm=datamapper --template-engine=haml askem
-cd askem
-git init
+	 merb-gen flat --testing-framework=rspec --orm=datamapper --template-engine=haml askem
+	 cd askem
+	 git init
+	 merb-gen model --model question # Fri May 29 19:57:34 IDT 2009
+	 mv app/models/question.rb models/ # Fri May 29 19:57:57 IDT 2009
+	 rm -R app # Fri May 29 19:58:06 IDT 2009
+	 merb-gen model --model answer # Sat May 30 22:04:03 IDT 2009
+	 mv app/models/answer.rb models/ # Sat May 30 22:16:01 IDT 2009
+	 rm -R app # Sat May 30 22:16:29 IDT 2009
+	 mkdir schema # Sat May 30 23:29:43 IDT 2009
+	 rake db:create # Sat May 30 23:40:48 IDT 2009
+	 rake db:automigrate # Sat May 30 23:44:05 IDT 2009

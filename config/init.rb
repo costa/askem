@@ -6,6 +6,7 @@ use_template_engine :haml
 
 dependency "merb-helpers"
 dependency "do_sqlite3"
+dependency "dm-aggregates"
 # IMPORTANT
 # export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$DYLD_FALLBACK_LIBRARY_PATH
 # or an equivalent on your OS if you're not on OSX yet
@@ -25,14 +26,10 @@ end
 
 Merb::Router.prepare do
   match('/:question', :method => :get, :ssim => true).
-    to(:controller => 'askem', :action => 'show_flash').
-    name('show_flash')
-  match('/:question', :method => :get, :ref => /./).
-    to(:controller => 'askem', :action => 'show_stats').
-    name('show_stats')
+    to(:controller => 'askem', :action => 'ssim_reply')
   match('/:question', :method => :get).
-    to(:controller => 'askem', :action => 'show_image').
-    name('show_image')
+    to(:controller => 'askem', :action => 'show').
+    name('show')
   match('/', :method => :get).
     to(:controller => 'askem', :action => 'index').
     name('index')

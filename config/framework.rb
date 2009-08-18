@@ -7,4 +7,3 @@ Merb::Config[:framework] = {
   :rest   => Merb.root / "src"  # TODO figure the stuff out
 #  :helper => Merb.root
 }
-

@@ -10,3 +10,11 @@
 	 mkdir schema # Sat May 30 23:29:43 IDT 2009
 	 rake db:create # Sat May 30 23:40:48 IDT 2009
 	 rake db:automigrate # Sat May 30 23:44:05 IDT 2009
+	 merb-gen model --model reply # Sun Jun  7 02:00:57 IDT 2009
+	 mv app/models/reply.rb models/ # Sun Jun  7 02:01:22 IDT 2009
+	 rm -R app # Sun Jun  7 02:01:28 IDT 2009
+	 rm spec/models/answer_spec.rb  # Mon Aug 17 16:33:04 IDT 2009
+	 mv models/answer.rb models/answer.rb~  # Mon Aug 17 16:33:19 IDT 2009
+	 rm spec/models/question_spec.rb  # Mon Aug 17 16:33:57 IDT 2009
+	 mv models/question.rb models/question.rb~ # Mon Aug 17 16:34:13 IDT 2009
+	 mv models/ref.rb models/ref.rb~  # Mon Aug 17 16:34:59 IDT 2009

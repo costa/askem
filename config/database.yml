@@ -2,7 +2,8 @@ development: &defaults
   # These are the settings for repository :default
   adapter:  sqlite3
   database: schema/sample_development.sqlite3
- 
+  log_stream: STDOUT
+  log_level: 0 
   # Add more repositories
   # repositories:
   #   repo1:

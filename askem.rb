@@ -1,31 +1,43 @@
 
 class Askem < Merb::Controller
 
+  # TODO figure this out
   def _template_location(action, type = nil, controller = controller_name)
     controller == "layout" ? "layout.#{action}.#{type}" : "#{action}.#{type}"
   end
 
   def index
-
+    #TODO DODODODO
   end
 
-  def show_stats
+  def show
+    # params:
+    #   hui
+    #   ref
+    #   skin
+    #   flash
+
+    case params['hui']
+    when 'img'
+      content_type :png
+
+      # TODO image caching
+
+      skin.image(question, answers, params['skin']).png(1)
+    else
+      render
+    end
   end
 
-  def show_image
-    content_type :png
+  def ssim_reply
+    @answer = skin.answer(question, answers, params[:skin],
+                          params[:ssim_x].to_i, params[:ssim_y].to_i)
 
-    # TODO image caching
+    raise BadRequest unless request.referer and @answer
 
-    skin.image(question, params['skin']).png(1)
-# TODO      comment = 'An Askem question'
-# TODO      label = question.statement
-  end
+    reply @answer, request.referer
 
-  def show_flash
-    raise BadRequest unless answer
-    # HERE
-    answer.statement
+    redirect url(:show, :flash => flash_delay)
   end
 
 end

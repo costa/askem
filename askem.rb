@@ -7,7 +7,7 @@ class Askem < Merb::Controller
   end
 
   def index
-    #TODO DODODODO
+    render
   end
 
   def show

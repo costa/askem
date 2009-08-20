@@ -91,7 +91,7 @@ describe Askem do
     it "should store the user reply"
 
     describe "when the user has previously replied to the question" do
-      it "should should effectively replace the reply record"
+      it "should effectively replace the reply record"
     end
 
   end

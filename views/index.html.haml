@@ -1,11 +1,13 @@
 !!! Strict
-%html{ html_attrs("en_us") }
+%html{ html_attrs("en") }
   %head
     %title
-      askem
-      = if @quest then @quest else 'NOW' end
+      Ask'em
     %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "content-type" }/
     %link{ :href => "/stylesheets/master.css", :rel => "stylesheet", :media => "screen", :type => "text/css", :charset => "utf-8" }/
   %body
-    %a{ :href => "#{host_url @quest }" }
-      = "#{@quest}?"
+    - for q in questions
+      .question
+        = q.text
+        .replies= q.replies
+        .last_reply_at= q.last_at

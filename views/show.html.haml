@@ -1,15 +1,15 @@
 !!! Strict
-%html{ html_attrs("en_us") }
+%html{ html_attrs("en") }
   %head
     %title
-      = "askEm: " + question
+      = "Ask'em: " + question
     %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "content-type" }/
     %link{ :href => "/stylesheets/master.css", :rel => "stylesheet", :media => "screen", :type => "text/css", :charset => "utf-8" }/
   %body
     -# TODO it with style...
 
     .question= question
-    - for a in answers do
+    - for a in answers
       - if a == @answer
         .answer.chosen
           = a[0]
@@ -18,7 +18,7 @@
         .answer
           = a[0]
           .score= a[1]
-    - if flash
+    - if flash  # TODO it through a file inclusion of an appropriate JS
       %p
         Thank you for replying to this question.
       %p

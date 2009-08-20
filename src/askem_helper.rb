@@ -1,3 +1,4 @@
+require 'ostruct'
 
 module Merb::AskemHelper
 
@@ -53,10 +54,20 @@ module Merb::AskemHelper
           if ask
             Hash[ask.replies.aggregate(:answer, :all.count)].sort { |a, b|
                                                                    a[1]<=>b[1] }
-            # TODO
           end
         end
       end
+  end
+
+  def questions
+    @questions ||=
+      Reply.aggregate(:ask_id, :all.count, :at.max, :order => [:at.count]).
+        collect { |ask_id, reply_count, last_reply_at|
+          OpenStruct.new :text => Ask.get!(ask_id).question,
+                         :replies => reply_count,
+                         :last_at => last_reply_at }
+
+# TODO: DM ticket?        Ask.all(:order => [:replies.count.desc])
   end
 
   def reply(answer, ref)
